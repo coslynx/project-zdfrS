@@ -1,0 +1,30 @@
+import sqlite3
+
+# Create a connection to the SQLite database
+conn = sqlite3.connect('code_database.db')
+c = conn.cursor()
+
+# Create a table to store redeemed codes
+c.execute('''CREATE TABLE IF NOT EXISTS redeemed_codes (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                code TEXT NOT NULL,
+                redeemed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )''')
+
+# Function to add a redeemed code to the database
+def add_redeemed_code(code):
+    c.execute("INSERT INTO redeemed_codes (code) VALUES (?)", (code,))
+    conn.commit()
+
+# Function to check if a code has already been redeemed
+def check_redeemed_code(code):
+    c.execute("SELECT * FROM redeemed_codes WHERE code = ?", (code,))
+    result = c.fetchone()
+    if result:
+        return True
+    else:
+        return False
+
+# Close the database connection
+def close_connection():
+    conn.close()
